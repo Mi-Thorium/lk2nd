@@ -534,6 +534,13 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 		is_device_locked()? "locked":"unlocked");
 	display_fbcon_menu_message(msg, FBCON_RED_MSG, common_factor);
 
+#ifdef DISPLAY_CUSTOM_MESSAGE
+	display_fbcon_menu_message("\n", FBCON_RED_MSG, common_factor);
+	fbcon_draw_line(FBCON_COMMON_MSG);
+	display_fbcon_menu_message("\n", FBCON_RED_MSG, common_factor);
+	display_fbcon_menu_message(DISPLAY_CUSTOM_MESSAGE, FBCON_COMMON_MSG, common_factor);
+#endif
+
 end:
 	fastboot_msg_info->info.msg_type = DISPLAY_MENU_FASTBOOT;
 	fastboot_msg_info->info.option_num = len;

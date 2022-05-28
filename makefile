@@ -88,6 +88,10 @@ else
 endif
 CFLAGS += -DBUILD_ID="\"$(BUILD_ID)\""
 
+ifneq ($(DISPLAY_CUSTOM_MESSAGE),)
+CFLAGS += -DDISPLAY_CUSTOM_MESSAGE="\"$(DISPLAY_CUSTOM_MESSAGE)\""
+endif
+
 # setup toolchain prefix
 TOOLCHAIN_PREFIX ?= arm-eabi-
 CFLAGS += -fstack-protector-all
