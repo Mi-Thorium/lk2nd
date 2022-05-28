@@ -32,8 +32,6 @@ DTBS += \
 endif
 ifeq ($(PROJECT), msm8952-secondary)
 DTBS += \
-	$(LOCAL_DIR)/msm8940-xiaomi-santoni.dtb \
-	$(LOCAL_DIR)/msm8940-xiaomi-ugg.dtb \
 	$(LOCAL_DIR)/sdm439-xiaomi-pine.dtb
 endif
 ifeq ($(PROJECT), msm8917-secondary)
@@ -44,4 +42,15 @@ endif
 ifeq ($(PROJECT), msm8937-secondary)
 DTBS += \
 	$(LOCAL_DIR)/msm8937-nokia-nd1.dtb
+endif
+
+ifeq ($(PROJECT), mi8937-secondary)
+DTBS += \
+	$(LOCAL_DIR)/msm8917-xiaomi-common.dtb \
+	$(LOCAL_DIR)/msm8917-xiaomi-riva.dtb \
+	$(LOCAL_DIR)/msm8917-xiaomi-ugglite.dtb \
+	$(LOCAL_DIR)/msm8937-xiaomi-land.dtb \
+	$(LOCAL_DIR)/msm8937-xiaomi-prada.dtb \
+	$(LOCAL_DIR)/msm8940-xiaomi-santoni.dtb \
+	$(LOCAL_DIR)/msm8940-xiaomi-ugg.dtb
 endif

@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (C) 2020 - Dreemurrs Embedded Labs
 
 /dts-v1/;
 
@@ -7,18 +6,16 @@
 
 / {
 	// This is used by the bootloader to find the correct DTB
-	qcom,msm-id = <313 0x0>;
-	qcom,board-id = <0x1000b 1>, <0x2000b 1>;
-	qcom,pmic-id = <0x10019 0x010011 0x0 0x0>;
+	qcom,msm-id = <294 0x0>;
+	qcom,board-id = <8 0>;
 
-	model = "Xiaomi Redmi 4X (santoni)";
-	compatible = "xiaomi,santoni", "qcom,msm8940", "lk2nd,device";
+	model = "Xiaomi Redmi 4 (prada)";
+	compatible = "xiaomi,prada", "qcom,msm8937", "lk2nd,device";
 
 	// Bootloader won't continue if it can't delete some nodes from below
 	soc {
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges = <0x0 0x0 0x0 0xffffffff>;
-
 	};
 };

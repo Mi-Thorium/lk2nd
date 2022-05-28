@@ -1,0 +1,36 @@
+// SPDX-License-Identifier: GPL-2.0-only
+
+/dts-v1/;
+
+/include/ "msm8952.dtsi"
+
+/ {
+	// This is used by the bootloader to find the correct DTB
+	qcom,msm-id = <303 0x0>, <308 0x0>, <309 0x0>;
+	qcom,board-id= <0x1000b 1>, <0x2000b 1>;
+
+	rolex {
+		model = "Xiaomi Redmi 4A (rolex)";
+		compatible = "xiaomi,rolex", "qcom,msm8917", "lk2nd,device";
+		lk2nd,match-wt-board-id = "S88503*";
+	};
+
+	riva {
+		model = "Xiaomi Redmi 5A (riva) (Oreo bootloader)";
+		compatible = "xiaomi,riva", "qcom,msm8917", "lk2nd,device";
+		lk2nd,match-wt-board-id = "S88505*";
+	};
+
+	tiare {
+		model = "Xiaomi Redmi Go (tiare)";
+		compatible = "xiaomi,tiare", "qcom,msm8917", "lk2nd,device";
+		lk2nd,match-wt-board-id = "S88508*";
+	};
+
+	// Bootloader won't continue if it can't delete some nodes from below
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x0 0x0 0xffffffff>;
+	};
+};
