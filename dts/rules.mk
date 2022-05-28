@@ -38,8 +38,11 @@ DTBS += \
 	$(LOCAL_DIR)/msm8917-xiaomi-common.dtb \
 	$(LOCAL_DIR)/msm8917-xiaomi-riva.dtb \
 	$(LOCAL_DIR)/msm8917-xiaomi-ugglite.dtb \
-	$(LOCAL_DIR)/msm8937-xiaomi-land.dtb \
 	$(LOCAL_DIR)/msm8937-xiaomi-prada.dtb \
 	$(LOCAL_DIR)/msm8940-xiaomi-santoni.dtb \
 	$(LOCAL_DIR)/msm8940-xiaomi-ugg.dtb
+endif
+ifeq ($(PROJECT), land-secondary)
+DTBS += \
+	$(LOCAL_DIR)/msm8937-xiaomi-land.dtb
 endif
