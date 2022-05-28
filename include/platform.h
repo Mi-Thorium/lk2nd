@@ -92,6 +92,8 @@ int platform_is_msm8996();
 int platform_is_apq8096_mediabox();
 bool platform_use_qmp_misc_settings();
 void set_device_unlock_value(int type, bool status);
+void get_build_date(unsigned char *buf);
+void get_build_id(unsigned char *buf);
 void get_product_name(unsigned char *buf);
 void get_bootloader_version(unsigned char *buf);
 void get_baseband_version(unsigned char *buf);

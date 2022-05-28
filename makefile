@@ -57,6 +57,7 @@ CFLAGS := -O0 -g -fno-builtin -finline -Wno-multichar -Wno-unused-parameter -Wno
 # -fcommon is needed to build this using GCC 10
 CFLAGS += -fcommon
 #CFLAGS += -Werror
+CFLAGS += -DBUILD_DATE="\"$(shell LANG=C TZ=UTC date)\""
 ifeq ($(EMMC_BOOT),1)
   CFLAGS += -D_EMMC_BOOT=1
 endif
@@ -79,6 +80,13 @@ endif
 ifeq ($(ENABLE_EARLY_ETHERNET),1)
   CFLAGS += -DENABLE_EARLY_ETHERNET=1
 endif
+
+ifneq ($(CUSTOM_BUILD_ID),)
+  BUILD_ID := $(CUSTOM_BUILD_ID)
+else
+  BUILD_ID := $(shell git rev-parse --short HEAD)
+endif
+CFLAGS += -DBUILD_ID="\"$(BUILD_ID)\""
 
 # setup toolchain prefix
 TOOLCHAIN_PREFIX ?= arm-eabi-
