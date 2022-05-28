@@ -103,6 +103,26 @@ static const char *parse_panel(const char *panel)
 	return panel_name;
 }
 
+static const char *parse_wt_board_id(const char *wt_board_id)
+{
+	const char *wt_board_id_name;
+	char *end;
+
+	if (!wt_board_id)
+		return NULL;
+
+	wt_board_id_name = wt_board_id;
+	if (!wt_board_id_name) /* Some other format */
+		return NULL;
+
+	/* Cut off other garbage at the end of the string (e.g. :1:none) */
+	end = strchr(wt_board_id_name, ':');
+	if (end)
+		*end = 0;
+
+	return wt_board_id_name;
+}
+
 static void parse_boot_args(void)
 {
 	char *saveptr;
@@ -120,6 +140,7 @@ static void parse_boot_args(void)
 			parse_arg(aboot, "slot_suffix=", &lk2nd_dev.slot_suffix);
 		} else {
 			parse_arg(arg, "mdss_mdp.panel=", &lk2nd_dev.panel.name);
+			parse_arg(arg, "board_id=", &lk2nd_dev.wt_board_id);
 		}
 
 		arg = strtok_r(NULL, " ", &saveptr);
@@ -127,6 +148,7 @@ static void parse_boot_args(void)
 
 	free(args);
 	lk2nd_dev.panel.name = parse_panel(lk2nd_dev.panel.name);
+	lk2nd_dev.wt_board_id = parse_wt_board_id(lk2nd_dev.wt_board_id);
 }
 
 static const char *fdt_copyprop_str(const void *fdt, int offset, const char *prop)
@@ -216,6 +238,13 @@ static bool lk2nd_device_match(const void *fdt, int offset)
 		if (!lk2nd_dev.panel.name)
 			return false;
 		return match_panel(fdt, offset, lk2nd_dev.panel.name);
+	}
+
+	val = fdt_getprop(fdt, offset, "lk2nd,match-wt-board-id", &len);
+	if (len >= 0) {
+		if (!lk2nd_dev.wt_board_id)
+			return false;
+		return match_string(lk2nd_dev.wt_board_id, val, len);
 	}
 
 	return true; // No match property

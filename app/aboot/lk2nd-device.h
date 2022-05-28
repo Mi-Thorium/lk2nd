@@ -25,6 +25,8 @@ struct lk2nd_device {
 	const char *radio;
 	const char *slot_suffix;
 
+	const char *wt_board_id;
+
 	void *pstore;
 	unsigned int pstore_size;
 	bool dev_mode;
