@@ -26,6 +26,10 @@ struct lk2nd_device {
 	const char *slot_suffix;
 
 	const char *wt_board_id;
+#ifdef MI8937_KERNEL
+	const char *mi8937_bootloader;
+	const char *mi8937_device;
+#endif
 
 	void *pstore;
 	unsigned int pstore_size;

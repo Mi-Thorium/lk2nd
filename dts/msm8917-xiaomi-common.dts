@@ -13,18 +13,22 @@
 		model = "Xiaomi Redmi 4A (rolex)";
 		compatible = "xiaomi,rolex", "qcom,msm8917", "lk2nd,device";
 		lk2nd,match-wt-board-id = "S88503*";
+		xiaomi,device = "rolex";
 	};
 
 	riva {
 		model = "Xiaomi Redmi 5A (riva) (Oreo bootloader)";
 		compatible = "xiaomi,riva", "qcom,msm8917", "lk2nd,device";
 		lk2nd,match-wt-board-id = "S88505*";
+		xiaomi,bootloader = "Oreo";
+		xiaomi,device = "riva";
 	};
 
 	tiare {
 		model = "Xiaomi Redmi Go (tiare)";
 		compatible = "xiaomi,tiare", "qcom,msm8917", "lk2nd,device";
 		lk2nd,match-wt-board-id = "S88508*";
+		xiaomi,device = "tiare";
 	};
 
 	// Bootloader won't continue if it can't delete some nodes from below

@@ -12,6 +12,7 @@
 
 	model = "Xiaomi Redmi Note 5A (ugg)";
 	compatible = "xiaomi,ugg", "qcom,msm8940", "lk2nd,device";
+	xiaomi,device = "ugg";
 
 	// Bootloader won't continue if it can't delete some nodes from below
 	soc {

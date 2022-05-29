@@ -380,6 +380,12 @@ static boolean dtb_read_find_match(dt_info *current_dtb_info, dt_info *best_dtb_
 	const char *board_prop = NULL;
 	const char *pmic_prop = NULL;
 	boolean find_best_match = false;
+#ifdef MI8937_KERNEL
+	int mi8937_bootloader_len;
+	const char *mi8937_bootloader_prop = NULL;
+	int mi8937_device_len;
+	const char *mi8937_device_prop = NULL;
+#endif
 
 	current_dtb_info->dt_match_val = 0;
 	root_offset = fdt_path_offset(dtb, "/");
@@ -387,6 +393,33 @@ static boolean dtb_read_find_match(dt_info *current_dtb_info, dt_info *best_dtb_
 		dprintf(CRITICAL, "ERROR: Unable to locate root node\n");
 		return false;
 	}
+
+#ifdef MI8937_KERNEL
+	mi8937_device_prop = (const char *)fdt_getprop(dtb, root_offset, "xiaomi,device", &mi8937_device_len);
+	if (mi8937_device_prop && (mi8937_device_len > 0)) {
+		dprintf(SPEW, "Xiaomi Mi8937 Device = %s\n", mi8937_device_prop);
+		if (strcmp(mi8937_device_prop, lk2nd_dev.mi8937_device) == 0) {
+			dprintf(SPEW, "Xiaomi Mi8937 Device Matched!\n");
+			mi8937_bootloader_prop = (const char *)fdt_getprop(dtb, root_offset, "xiaomi,bootloader", &mi8937_bootloader_len);
+			if (mi8937_bootloader_prop && (mi8937_bootloader_len > 0)) {
+				dprintf(SPEW, "Xiaomi Mi8937 Bootloader = %s\n", mi8937_bootloader_prop);
+				if (strcmp(mi8937_bootloader_prop, lk2nd_dev.mi8937_bootloader) == 0) {
+					dprintf(SPEW, "Xiaomi Mi8937 Bootloader Matched! Found the best dtb node.\n");
+					current_dtb_info->dt_match_val = UINT_MAX;
+					goto cleanup;
+				} else {
+					dprintf(SPEW, "Xiaomi Mi8937 Bootloader doesn't match!\n");
+				}
+			} else {
+				dprintf(SPEW, "Xiaomi Mi8937 Bootloader hasn't specified! Found the best dtb node.\n");
+				current_dtb_info->dt_match_val = UINT_MAX;
+				goto cleanup;
+			}
+		} else {
+			dprintf(SPEW, "Xiaomi Mi8937 Device doesn't match!\n");
+		}
+	}
+#endif
 
 	/* Get the msm-id prop from DTB and find best match */
 	platform_prop = (const char *)fdt_getprop(dtb, root_offset, "qcom,msm-id", &platform_id_len);

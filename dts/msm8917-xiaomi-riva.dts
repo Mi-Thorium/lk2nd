@@ -11,6 +11,8 @@
 
 	model = "Xiaomi Redmi 5A (riva) (Nougat bootloader)";
 	compatible = "xiaomi,riva", "qcom,msm8917", "lk2nd,device";
+	xiaomi,bootloader = "Nougat";
+	xiaomi,device = "riva";
 
 	// Bootloader won't continue if it can't delete some nodes from below
 	soc {

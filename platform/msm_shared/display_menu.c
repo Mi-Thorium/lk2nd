@@ -504,6 +504,17 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 		display_fbcon_menu_message(msg, FBCON_COMMON_MSG, common_factor);
 	}
 
+#ifdef MI8937_KERNEL
+	if (lk2nd_dev.mi8937_bootloader) {
+		snprintf(msg, sizeof(msg), "MI8937 BOOTLOADER - %s\n", lk2nd_dev.mi8937_bootloader);
+		display_fbcon_menu_message(msg, FBCON_COMMON_MSG, common_factor);
+	}
+	if (lk2nd_dev.mi8937_device) {
+		snprintf(msg, sizeof(msg), "MI8937 DEVICE - %s\n", lk2nd_dev.mi8937_device);
+		display_fbcon_menu_message(msg, FBCON_COMMON_MSG, common_factor);
+	}
+#endif
+
 	memset(msg_buf, 0, sizeof(msg_buf));
 	target_serialno((unsigned char *) msg_buf);
 	snprintf(msg, sizeof(msg), "SERIAL NUMBER - %s\n", msg_buf);

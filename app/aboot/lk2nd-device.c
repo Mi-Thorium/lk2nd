@@ -366,6 +366,15 @@ static void lk2nd_parse_device_node(const void *fdt)
 	else
 		dprintf(CRITICAL, "Device node is missing 'model' property\n");
 
+#ifdef MI8937_KERNEL
+	lk2nd_dev.mi8937_bootloader = fdt_copyprop_str(fdt, offset, "xiaomi,bootloader");
+	if (lk2nd_dev.mi8937_bootloader)
+		dprintf(INFO, "Xiaomi Mi8937 Bootloader: %s\n", lk2nd_dev.mi8937_bootloader);
+	lk2nd_dev.mi8937_device = fdt_copyprop_str(fdt, offset, "xiaomi,device");
+	if (lk2nd_dev.mi8937_device)
+		dprintf(INFO, "Xiaomi Mi8937 Device: %s\n", lk2nd_dev.mi8937_device);
+#endif
+
 	pstore = fdt_getprop(fdt, offset, "lk2nd,pstore", &len);
 	if (pstore && len == 2 * sizeof(*pstore)) {
 		lk2nd_pstore_map(fdt32_to_cpu(pstore[0]),

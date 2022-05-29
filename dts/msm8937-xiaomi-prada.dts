@@ -11,6 +11,7 @@
 
 	model = "Xiaomi Redmi 4 (prada)";
 	compatible = "xiaomi,prada", "qcom,msm8937", "lk2nd,device";
+	xiaomi,device = "prada";
 
 	// Bootloader won't continue if it can't delete some nodes from below
 	soc {
