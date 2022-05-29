@@ -150,10 +150,10 @@ void partition_virtual_moto8937(uint32_t block_size)
 	}
 }
 #else
-void partition_split_boot(uint32_t block_size)
+void partition_split_boot(uint32_t block_size, bool part_recovery)
 {
 	struct partition_entry *boot;
-	int index = partition_get_index("boot");
+	int index = partition_get_index(part_recovery ? "recovery" : "boot");
 	unsigned long long lk_size = (1 * 1024 * 1024) / block_size;
 
 	if (index == INVALID_PTN) {
@@ -170,7 +170,7 @@ void partition_split_boot(uint32_t block_size)
 	if (partition_count < NUM_PARTITIONS) {
 		struct partition_entry *lk = &partition_entries[partition_count++];
 		memcpy(lk, boot, sizeof(*lk));
-		strcpy(lk->name, "lk2nd");
+		strcpy(lk->name, part_recovery ? "lk2nd-recovery" : "lk2nd");
 		lk->last_lba = lk->first_lba + lk_size - 1;
 		lk->size = lk_size;
 	} else {
@@ -220,7 +220,8 @@ unsigned int partition_read_table()
 #if PROJECT_MOTO8937_SECONDARY
 	partition_virtual_moto8937(block_size);
 #else
-	partition_split_boot(block_size);
+	partition_split_boot(block_size, false);
+	partition_split_boot(block_size, true);
 #endif
 	return 0;
 }
