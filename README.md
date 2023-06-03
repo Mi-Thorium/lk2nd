@@ -40,6 +40,7 @@ and then loaded by lk2nd.
 - Motorola Moto G7 Power - ocean
 - Xiaomi Mi A2 Lite - daisy
 - Xiaomi Mi A1 - tissot
+- Xiaomi UTER - uter
 - Samsung Galaxy Tab A2 XL WiFi (2018) - SM-T590
 - Huawei Maimang 5 / Nova (Plus) / G9 (Plus) - milan
 - Lenovo P2 - kuntao
