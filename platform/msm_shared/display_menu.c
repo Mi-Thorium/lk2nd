@@ -40,6 +40,7 @@
 #include <smem.h>
 #include <target.h>
 #include <sys/types.h>
+#include <reboot.h>
 #include <../../../app/aboot/devinfo.h>
 #include <../../../app/aboot/recovery.h>
 #include <../../../app/aboot/lk2nd-device.h>
@@ -87,6 +88,8 @@ static const char *lock_menu_common_msg = "If you lock the bootloader, "\
 
 #define DELAY_5SEC 5000
 #define DELAY_30SEC 30000
+
+extern unsigned reboot_mode;
 
 static bool is_thread_start = false;
 static struct select_msg_info msg_info;
@@ -466,6 +469,46 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 		"press power key to select\n\n", FBCON_COMMON_MSG, common_factor);
 
 	display_fbcon_menu_message("FASTBOOT MODE\n", FBCON_RED_MSG, common_factor);
+
+	display_fbcon_menu_message("REBOOT MODE - ", FBCON_BLUE_MSG, common_factor);
+	switch (reboot_mode) {
+		case REBOOT_MODE_UNKNOWN:
+			display_fbcon_menu_message("UNKNOWN", FBCON_BLUE_MSG, common_factor);
+			break;
+		case RECOVERY_MODE:
+			display_fbcon_menu_message("RECOVERY", FBCON_BLUE_MSG, common_factor);
+			break;
+		case FASTBOOT_MODE:
+			display_fbcon_menu_message("FASTBOOT", FBCON_BLUE_MSG, common_factor);
+			break;
+		case ALARM_BOOT:
+			display_fbcon_menu_message("ALARM_BOOT", FBCON_BLUE_MSG, common_factor);
+			break;
+#if ENABLE_VB_ATTEST
+		case DM_VERITY_EIO:
+			display_fbcon_menu_message("DM_VERITY_EIO", FBCON_BLUE_MSG, common_factor);
+			break;
+#else
+		case DM_VERITY_LOGGING:
+			display_fbcon_menu_message("DM_VERITY_LOGGING", FBCON_BLUE_MSG, common_factor);
+			break;
+#endif
+		case DM_VERITY_ENFORCING:
+			display_fbcon_menu_message("DM_VERITY_ENFORCING", FBCON_BLUE_MSG, common_factor);
+			break;
+		case DM_VERITY_KEYSCLEAR:
+			display_fbcon_menu_message("DM_VERITY_KEYSCLEAR", FBCON_BLUE_MSG, common_factor);
+			break;
+		case NORMAL_DLOAD:
+			display_fbcon_menu_message("NORMAL_DLOAD", FBCON_BLUE_MSG, common_factor);
+			break;
+		case EMERGENCY_DLOAD:
+			display_fbcon_menu_message("EMERGENCY_DLOAD", FBCON_BLUE_MSG, common_factor);
+			break;
+		default:
+			break;
+	}
+	display_fbcon_menu_message("\n", FBCON_BLUE_MSG, common_factor);
 
 	snprintf(msg, sizeof(msg), "BUILD_DATE - %s\n", BUILD_DATE);
 	display_fbcon_menu_message(msg, FBCON_COMMON_MSG, common_factor);

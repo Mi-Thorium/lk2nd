@@ -252,6 +252,7 @@ static char *vbcmdline;
 static bootinfo info = {0};
 static void *recovery_dtbo_buf = NULL;
 static uint32_t recovery_dtbo_size = 0;
+unsigned reboot_mode = 0;
 
 /* Assuming unauthorized kernel image by default */
 static int auth_kernel_img = 0;
@@ -5223,7 +5224,6 @@ void aboot_fastboot_register_commands(void)
 
 void aboot_init(const struct app_descriptor *app)
 {
-	unsigned reboot_mode = 0;
 	int boot_err_type = 0;
 	int boot_slot = INVALID;
 
@@ -5337,6 +5337,7 @@ void aboot_init(const struct app_descriptor *app)
 #else
 	reboot_mode = check_reboot_mode();
 #endif
+
 	if (reboot_mode == RECOVERY_MODE)
 	{
 		boot_into_recovery = 1;
