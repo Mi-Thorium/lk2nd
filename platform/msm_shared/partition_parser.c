@@ -96,6 +96,60 @@ struct partition_entry* partition_get_partition_entries()
 	return partition_entries;
 }
 
+#if PROJECT_MOTO8937_SECONDARY
+void partition_virtual_moto8937(uint32_t block_size)
+{
+	int new_part_index, orig_part_index, be_part_index;
+	struct partition_entry *new_virt_part, *orig_part, *be_part;
+	unsigned long long virt_boot_size = (32 * 1024 * 1024) / block_size;
+	// Layout: [ Virtual boot (32MB) |          Virtual recovery          ...]
+
+	if (partition_count + 2 >= NUM_PARTITIONS) {
+		dprintf(CRITICAL, "%s: Too many partitions to add virtual partitions\n", __func__);
+		return;
+	}
+
+	be_part_index = partition_get_index("cache");
+	if (be_part_index == INVALID_PTN) {
+		dprintf(CRITICAL, "%s: Backend partition not found\n", __func__);
+		return;
+	}
+	be_part = &partition_entries[be_part_index];
+
+	// Rename the backend partition, to avoid writing to virtual partitions by mistake
+	strcpy(be_part->name, "real_cache");
+
+	// Create virtual boot partition at offset 0 of backend partition
+	orig_part_index = partition_get_index("boot");
+	if (orig_part_index != INVALID_PTN) {
+		orig_part = &partition_entries[orig_part_index];
+
+		new_virt_part = &partition_entries[partition_count++];
+		memcpy(new_virt_part, orig_part, sizeof(*new_virt_part));
+
+		new_virt_part->first_lba = be_part->first_lba;
+		new_virt_part->last_lba = new_virt_part->first_lba + virt_boot_size - 1;
+		new_virt_part->size = virt_boot_size;
+
+		strcpy(orig_part->name, "real_boot");
+	}
+
+	// Create virtual recovery partition after virtual boot partition
+	orig_part_index = partition_get_index("recovery");
+	if (orig_part_index != INVALID_PTN) {
+		orig_part = &partition_entries[orig_part_index];
+
+		new_virt_part = &partition_entries[partition_count++];
+		memcpy(new_virt_part, orig_part, sizeof(*new_virt_part));
+
+		new_virt_part->first_lba = be_part->first_lba + virt_boot_size;
+		new_virt_part->last_lba = be_part->last_lba;
+		new_virt_part->size = (be_part->last_lba + 1) - new_virt_part->first_lba;
+
+		strcpy(orig_part->name, "real_recovery");
+	}
+}
+#else
 void partition_split_boot(uint32_t block_size)
 {
 	struct partition_entry *boot;
@@ -126,6 +180,7 @@ void partition_split_boot(uint32_t block_size)
 	boot->first_lba += lk_size;
 	boot->size -= lk_size;
 }
+#endif
 
 unsigned int partition_read_table()
 {
@@ -160,7 +215,11 @@ unsigned int partition_read_table()
 	/* TODO: Move this to mmc_boot_read_gpt() */
 	partition_scan_for_multislot();
 
+#if PROJECT_MOTO8937_SECONDARY
+	partition_virtual_moto8937(block_size);
+#else
 	partition_split_boot(block_size);
+#endif
 	return 0;
 }
 
