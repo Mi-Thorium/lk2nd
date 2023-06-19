@@ -381,10 +381,9 @@ static boolean dtb_read_find_match(dt_info *current_dtb_info, dt_info *best_dtb_
 	const char *pmic_prop = NULL;
 	boolean find_best_match = false;
 #ifdef MI8937_KERNEL
+	char mi8937_compatible_buf[20];
 	int mi8937_bootloader_len;
 	const char *mi8937_bootloader_prop = NULL;
-	int mi8937_device_len;
-	const char *mi8937_device_prop = NULL;
 #endif
 
 	current_dtb_info->dt_match_val = 0;
@@ -395,29 +394,26 @@ static boolean dtb_read_find_match(dt_info *current_dtb_info, dt_info *best_dtb_
 	}
 
 #ifdef MI8937_KERNEL
-	mi8937_device_prop = (const char *)fdt_getprop(dtb, root_offset, "xiaomi,device", &mi8937_device_len);
-	if (mi8937_device_prop && (mi8937_device_len > 0)) {
-		dprintf(SPEW, "Xiaomi Mi8937 Device = %s\n", mi8937_device_prop);
-		if (strcmp(mi8937_device_prop, lk2nd_dev.mi8937_device) == 0) {
-			dprintf(SPEW, "Xiaomi Mi8937 Device Matched!\n");
-			mi8937_bootloader_prop = (const char *)fdt_getprop(dtb, root_offset, "xiaomi,bootloader", &mi8937_bootloader_len);
-			if (mi8937_bootloader_prop && (mi8937_bootloader_len > 0)) {
-				dprintf(SPEW, "Xiaomi Mi8937 Bootloader = %s\n", mi8937_bootloader_prop);
-				if (strcmp(mi8937_bootloader_prop, lk2nd_dev.mi8937_bootloader) == 0) {
-					dprintf(SPEW, "Xiaomi Mi8937 Bootloader Matched! Found the best dtb node.\n");
-					current_dtb_info->dt_match_val = UINT_MAX;
-					goto cleanup;
-				} else {
-					dprintf(SPEW, "Xiaomi Mi8937 Bootloader doesn't match!\n");
-				}
-			} else {
-				dprintf(SPEW, "Xiaomi Mi8937 Bootloader hasn't specified! Found the best dtb node.\n");
+	snprintf(mi8937_compatible_buf, sizeof(mi8937_compatible_buf), "xiaomi,%s", lk2nd_dev.mi8937_device);
+	if (fdt_node_check_compatible(dtb, root_offset, mi8937_compatible_buf) == 1) {
+		dprintf(SPEW, "Xiaomi Mi8937 Device Matched!\n");
+		mi8937_bootloader_prop = (const char *)fdt_getprop(dtb, root_offset, "xiaomi,bootloader", &mi8937_bootloader_len);
+		if (mi8937_bootloader_prop && (mi8937_bootloader_len > 0)) {
+			dprintf(SPEW, "Xiaomi Mi8937 Bootloader = %s\n", mi8937_bootloader_prop);
+			if (strcmp(mi8937_bootloader_prop, lk2nd_dev.mi8937_bootloader) == 0) {
+				dprintf(SPEW, "Xiaomi Mi8937 Bootloader Matched! Found the best dtb node.\n");
 				current_dtb_info->dt_match_val = UINT_MAX;
 				goto cleanup;
+			} else {
+				dprintf(SPEW, "Xiaomi Mi8937 Bootloader doesn't match!\n");
 			}
 		} else {
-			dprintf(SPEW, "Xiaomi Mi8937 Device doesn't match!\n");
+			dprintf(SPEW, "Xiaomi Mi8937 Bootloader hasn't specified! Found the best dtb node.\n");
+			current_dtb_info->dt_match_val = UINT_MAX;
+			goto cleanup;
 		}
+	} else {
+		dprintf(SPEW, "Xiaomi Mi8937 Device doesn't match!\n");
 	}
 #endif
 
