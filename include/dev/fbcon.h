@@ -66,6 +66,7 @@ enum fbcon_msg_type {
 	FBCON_ORANGE_MSG,
 	FBCON_RED_MSG,
 	FBCON_GREEN_MSG,
+	FBCON_BLUE_MSG,
 
 	/* and the select message's background */
 	FBCON_SELECT_MSG_BG_COLOR,
