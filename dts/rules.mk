@@ -46,3 +46,9 @@ ifeq ($(PROJECT), land-secondary)
 DTBS += \
 	$(LOCAL_DIR)/msm8937-xiaomi-land.dtb
 endif
+ifeq ($(PROJECT), moto8937-secondary)
+DTBS += \
+        $(LOCAL_DIR)/msm8917-motorola-hannah.dtb \
+        $(LOCAL_DIR)/msm8937-motorola-hannah.dtb \
+        $(LOCAL_DIR)/msm8940-motorola-hannah.dtb
+endif
