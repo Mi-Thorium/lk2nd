@@ -15,6 +15,7 @@ and then loaded by lk2nd.
 - SDM632
 
 ### Supported devices
+- Motorola Moto E5 Plus (xhannah)
 - Motorola Moto G4 Play (harpia)
 - Motorola Moto G5 Plus (potter)
 - Motorola Moto G6 (ali) NOTE: Build with motorola-ali-secondary

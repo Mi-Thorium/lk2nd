@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: GPL-2.0-only
+
+/dts-v1/;
+
+/include/ "msm8952.dtsi"
+/include/ "motorola-carrier-channel-ids.dtsi"
+
+/ {
+	// This is used by the bootloader to find the correct DTB
+	qcom,msm-id = <313 0x0>;
+	qcom,board-id = <0x48 0x8000>, <0x49 0x8000>;
+
+	model = "Moto E5 Plus MSM8940 (hannah)";
+	compatible = "motorola,hannah", "qcom,msm8940", "lk2nd,device";
+	motorola,device = "hannah";
+	lk2nd,motorola-unitinfo = <1>;
+	lk2nd,pstore = <0xae000000 0x80000>;
+};
