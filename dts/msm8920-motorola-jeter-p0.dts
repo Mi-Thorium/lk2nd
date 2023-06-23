@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: GPL-2.0-only
+
+/dts-v1/;
+
+/include/ "msm8952.dtsi"
+/include/ "motorola-carrier-channel-ids.dtsi"
+
+/ {
+	// This is used by the bootloader to find the correct DTB
+	qcom,msm-id = <320 0x0>;
+	qcom,board-id = <0x43 0x8000>;
+
+	model = "Moto G6 Play MSM8920 P0 (jeter)";
+	compatible = "motorola,jeter", "qcom,msm8920", "lk2nd,device";
+	motorola,device = "jeter";
+	lk2nd,motorola-unitinfo = <1>;
+	lk2nd,pstore = <0xae000000 0x80000>;
+};
