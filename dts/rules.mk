@@ -54,5 +54,10 @@ DTBS += \
         $(LOCAL_DIR)/msm8917-motorola-jeter.dtb \
         $(LOCAL_DIR)/msm8920-motorola-jeter-p0.dtb \
         $(LOCAL_DIR)/msm8920-motorola-jeter-p3.dtb \
-        $(LOCAL_DIR)/msm8937-motorola-jeter.dtb
+        $(LOCAL_DIR)/msm8937-motorola-jeter.dtb \
+        $(LOCAL_DIR)/msm8937-motorola-montana-p0.dtb \
+        $(LOCAL_DIR)/msm8937-motorola-montana-p1a.dtb \
+        $(LOCAL_DIR)/msm8937-motorola-montana-p1b.dtb \
+        $(LOCAL_DIR)/msm8937-motorola-montana-p2.dtb \
+        $(LOCAL_DIR)/msm8937-motorola-montana-p3.dtb
 endif

@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: GPL-2.0-only
+
+/dts-v1/;
+
+/include/ "msm8937-motorola-montana-common.dtsi"
+
+/ {
+	qcom,board-id = <0x43 0x8000>;
+};
