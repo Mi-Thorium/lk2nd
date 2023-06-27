@@ -51,7 +51,7 @@ $(OUTELF_STRIP): $(OUTELF)
 $(BUILDDIR)/%.dtb: %.dts
 	@$(MKDIR)
 	@echo compiling $<
-	$(NOECHO)dtc -O dtb -o $@ $<
+	$(NOECHO)dtc $(DTC_FLAGS) -O dtb -o $@ $<
 
 $(OUTDTIMG): $(DTBS)
 	$(NOECHO)scripts/dtbTool -o $@ $(BUILDDIR)/dts
