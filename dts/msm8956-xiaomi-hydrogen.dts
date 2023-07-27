@@ -1,0 +1,27 @@
+/dts-v1/;
+
+/include/ "msm8952.dtsi"
+
+/ {
+	// This is used by the bootloader to find the correct DTB
+	qcom,board-id = <0x19 0x00>;
+	qcom,msm-id = <0x10a 0x00>;
+
+	model = "Xiaomi Mi Max (hydrogen)";
+	compatible = "xiaomi,hydrogen", "qcom,msm8956", "lk2nd,device";
+
+	// Bootloader won't continue without some nodes from below
+	cpus {
+		cpu@101 {
+			device_type = "cpu";
+		};
+
+		cpu@102 {
+			device_type = "cpu";
+		};
+
+		cpu@103 {
+			device_type = "cpu";
+		};
+	};
+};
