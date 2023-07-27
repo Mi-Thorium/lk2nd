@@ -66,3 +66,7 @@ DTBS += \
         $(LOCAL_DIR)/msm8937-motorola-montana-p2.dtb \
         $(LOCAL_DIR)/msm8937-motorola-montana-p3.dtb
 endif
+ifeq ($(PROJECT), msm8952-secondary)
+DTBS += \
+	$(LOCAL_DIR)/msm8956-xiaomi-hydrogen.dtb
+endif

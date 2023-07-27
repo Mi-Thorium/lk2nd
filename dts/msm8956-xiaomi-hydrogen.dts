@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: GPL-2.0-only
+
+/dts-v1/;
+
+/include/ "msm8952.dtsi"
+
+/ {
+	// This is used by the bootloader to find the correct DTB
+	qcom,msm-id = <266 0x10001>;
+	qcom,board-id = <25 0>;
+
+	model = "Xiaomi Mi Max (hydrogen)";
+	compatible = "xiaomi,hydrogen", "qcom,msm8956", "lk2nd,device";
+
+	// Bootloader won't continue if it can't delete some nodes from below
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x0 0x0 0xffffffff>;
+	};
+};
