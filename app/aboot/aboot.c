@@ -1074,13 +1074,44 @@ static char *concat_args(const char *a, const char *b)
 	return r;
 }
 
+void patch_cmdline(char* cmdline) {
+	char *cmdline_offset_ptr, *cmdline_offset_ptr2;
+	char *boot_dev_buf = (char *) malloc(sizeof(char) * BOOT_DEV_MAX_LEN);
+	int value_len = 0;
+
+	cmdline_offset_ptr = strstr(cmdline, "androidboot.bootdevice=");
+	if (cmdline_offset_ptr) {
+		cmdline_offset_ptr += strlen("androidboot.bootdevice=");
+
+		cmdline_offset_ptr2 = strstr(cmdline_offset_ptr, " ");
+		if (!cmdline_offset_ptr2)
+			cmdline_offset_ptr2 = cmdline_offset_ptr + strlen(cmdline_offset_ptr);
+		value_len = cmdline_offset_ptr2 - cmdline_offset_ptr;
+		platform_boot_dev_cmdline(boot_dev_buf);
+		memset(cmdline_offset_ptr, ' ', value_len);
+		memcpy(cmdline_offset_ptr, boot_dev_buf,
+			value_len < strlen(boot_dev_buf) ? value_len : strlen(boot_dev_buf));
+	}
+
+	if (boot_dev_buf)
+		free(boot_dev_buf);
+}
+
 unsigned char *update_cmdline(const char* cmdline)
 {
+	char *buf;
+
 	/* Only take cmdline from original bootloader if downstream or lk2nd */
 	if (cmdline && lk2nd_dev.cmdline &&
-	    (strstr(cmdline, "androidboot.hardware=qcom") || strstr(cmdline, "lk2nd")))
-		return concat_args(cmdline, lk2nd_dev.cmdline);
-	return strdup(cmdline);
+	    (strstr(cmdline, "androidboot.hardware=qcom") || strstr(cmdline, "lk2nd"))) {
+		buf = concat_args(cmdline, lk2nd_dev.cmdline);
+		patch_cmdline(buf);
+		return buf;
+	}
+
+	buf = strdup(cmdline);
+	patch_cmdline(buf);
+	return buf;
 }
 
 unsigned *atag_core(unsigned *ptr)
