@@ -190,11 +190,13 @@ unsigned int partition_read_table()
 	block_size = mmc_get_device_blocksize();
 
 	/* Allocate partition entries array */
-	if(!partition_entries)
+	if(partition_entries)
 	{
-		partition_entries = (struct partition_entry *) calloc(NUM_PARTITIONS, sizeof(struct partition_entry));
-		ASSERT(partition_entries);
+		free(partition_entries);
 	}
+	partition_entries = (struct partition_entry *) calloc(NUM_PARTITIONS, sizeof(struct partition_entry));
+	ASSERT(partition_entries);
+	partition_count = 0;
 
 	/* Read MBR of the card */
 	ret = mmc_boot_read_mbr(block_size);
