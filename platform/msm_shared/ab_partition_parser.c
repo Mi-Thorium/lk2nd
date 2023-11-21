@@ -58,7 +58,7 @@ static void mark_all_partitions_active(signed slot);
 	Function: To read slot attribute of
 		of the partition_entry
 */
-inline bool slot_is_active(struct partition_entry *partition_entries,
+static inline bool slot_is_active(struct partition_entry *partition_entries,
 					unsigned index)
 {
 	if ((partition_entries[index].attribute_flag &
@@ -68,7 +68,7 @@ inline bool slot_is_active(struct partition_entry *partition_entries,
 		return false;
 }
 
-inline bool slot_is_sucessful(struct partition_entry *partition_entries,
+static inline bool slot_is_sucessful(struct partition_entry *partition_entries,
 						unsigned index)
 {
 	if ((partition_entries[index].attribute_flag &
@@ -78,21 +78,21 @@ inline bool slot_is_sucessful(struct partition_entry *partition_entries,
 		return false;
 }
 
-inline unsigned slot_retry_count(struct partition_entry *partition_entries,
+static inline unsigned slot_retry_count(struct partition_entry *partition_entries,
 						unsigned index)
 {
 	return ((partition_entries[index].attribute_flag
 		& PART_ATT_MAX_RETRY_COUNT_VAL) >> PART_ATT_MAX_RETRY_CNT_BIT);
 }
 
-inline unsigned slot_priority(struct partition_entry *partition_entries,
+static inline unsigned slot_priority(struct partition_entry *partition_entries,
 						unsigned index)
 {
 	return ((partition_entries[index].attribute_flag
 		& PART_ATT_PRIORITY_VAL)>>PART_ATT_PRIORITY_BIT);
 }
 
-inline bool slot_is_bootable(struct partition_entry *partition_entries,
+static inline bool slot_is_bootable(struct partition_entry *partition_entries,
 						unsigned index)
 {
 	if ((partition_entries[index].attribute_flag &
