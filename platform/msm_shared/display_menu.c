@@ -41,6 +41,7 @@
 #include <target.h>
 #include <sys/types.h>
 #include <reboot.h>
+#include <boot_device.h>
 #include <../../../app/aboot/devinfo.h>
 #include <../../../app/aboot/recovery.h>
 #include <../../../app/aboot/lk2nd-device.h>
@@ -435,6 +436,7 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 {
 	int len;
 	int msg_type = FBCON_COMMON_MSG;
+	unsigned int msg_buf_uint;
 	char msg_buf[64];
 	char msg[128];
 
@@ -540,6 +542,16 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 	smem_get_hw_platform_name((unsigned char *) msg_buf, sizeof(msg_buf));
 	snprintf(msg, sizeof(msg), "VARIANT - %s %s\n",
 		msg_buf, target_is_emmc_boot()? "eMMC":"UFS");
+	display_fbcon_menu_message(msg, FBCON_COMMON_MSG, common_factor);
+
+	memset(msg_buf, 0, sizeof(msg_buf));
+	platform_boot_dev_cmdline(msg_buf);
+	snprintf(msg, sizeof(msg), "BOOT DEVICE - %s\n", msg_buf);
+	display_fbcon_menu_message(msg, FBCON_COMMON_MSG, common_factor);
+
+	memset(msg_buf, 0, sizeof(msg_buf));
+	msg_buf_uint = platform_get_boot_dev_slot_num();
+	snprintf(msg, sizeof(msg), "BOOT DEVICE SLOT - %u\n", msg_buf_uint);
 	display_fbcon_menu_message(msg, FBCON_COMMON_MSG, common_factor);
 
 	memset(msg_buf, 0, sizeof(msg_buf));
