@@ -121,8 +121,7 @@ static char *fastboot_option_menu[] = {
 		[1] = "Restart to bootloader\n",
 		[2] = "Restart to recovery\n",
 		[3] = "Power off\n",
-		[4] = "Boot to FFBM\n",
-		[5] = "Blank\n"};
+		[4] = "Blank\n"};
 
 static struct unlock_info munlock_info[] = {
 		[DISPLAY_MENU_LOCK] = {UNLOCK, FALSE},

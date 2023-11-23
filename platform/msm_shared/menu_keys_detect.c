@@ -90,7 +90,6 @@ static uint32_t fastboot_index_action[] = {
 		[1] = FASTBOOT,
 		[2] = RECOVER,
 		[3] = POWEROFF,
-		[4] = FFBM,
 };
 
 static uint32_t unlock_index_action[] = {
