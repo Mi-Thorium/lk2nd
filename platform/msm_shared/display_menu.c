@@ -117,9 +117,9 @@ static char *verify_option_menu[] = {
 		[BACK] = "Back to previous page\n"};
 
 static char *fastboot_option_menu[] = {
-		[0] = "START\n",
-		[1] = "Restart bootloader\n",
-		[2] = "Recovery mode\n",
+		[0] = "Restart\n",
+		[1] = "Restart to bootloader\n",
+		[2] = "Restart to recovery\n",
 		[3] = "Power off\n",
 		[4] = "Boot to FFBM\n",
 		[5] = "Blank\n"};
