@@ -86,10 +86,11 @@ static uint32_t verify_index_action[] = {
 };
 
 static uint32_t fastboot_index_action[] = {
-		[0] = RESTART,
-		[1] = FASTBOOT,
-		[2] = RECOVER,
-		[3] = POWEROFF,
+		[0] = CONTINUE,
+		[1] = RESTART,
+		[2] = FASTBOOT,
+		[3] = RECOVER,
+		[4] = POWEROFF,
 };
 
 static uint32_t unlock_index_action[] = {
@@ -358,6 +359,12 @@ void keys_detect_init()
 	before_time = current_time();
 }
 
+extern void continue_boot(void);
+__WEAK void continue_boot(void)
+{
+	return;
+}
+
 int select_msg_keys_detect(void *param) {
 	struct select_msg_info *msg_info = (struct select_msg_info*)param;
 
@@ -401,6 +408,12 @@ int select_msg_keys_detect(void *param) {
 		}
 		mutex_release(&msg_info->msg_lock);
 		thread_sleep(KEY_DETECT_FREQUENCY);
+	}
+
+	if (msg_info->info.rel_exit &&
+		msg_info->info.msg_type == DISPLAY_MENU_FASTBOOT) {
+		/* If we're selecting CONTINUE from fastboot menu*/
+		continue_boot();
 	}
 
 	return 0;

@@ -117,11 +117,12 @@ static char *verify_option_menu[] = {
 		[BACK] = "Back to previous page\n"};
 
 static char *fastboot_option_menu[] = {
-		[0] = "Restart\n",
-		[1] = "Restart to bootloader\n",
-		[2] = "Restart to recovery\n",
-		[3] = "Power off\n",
-		[4] = "Blank\n"};
+		[0] = "Continue to boot\n",
+		[1] = "Restart\n",
+		[2] = "Restart to bootloader\n",
+		[3] = "Restart to recovery\n",
+		[4] = "Power off\n",
+		[5] = "Blank\n"};
 
 static struct unlock_info munlock_info[] = {
 		[DISPLAY_MENU_LOCK] = {UNLOCK, FALSE},
