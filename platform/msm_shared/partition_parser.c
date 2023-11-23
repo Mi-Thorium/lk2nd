@@ -32,6 +32,7 @@
 #include "mmc.h"
 #include "partition_parser.h"
 #include "ab_partition_parser.h"
+#include "boot_device.h"
 
 static bool flashing_gpt = 0;
 static bool parse_secondary_gpt = 0;
@@ -223,12 +224,15 @@ unsigned int partition_read_table()
 	/* TODO: Move this to mmc_boot_read_gpt() */
 	partition_scan_for_multislot();
 
+	if (platform_get_boot_dev_slot_num() != 2) {
 #if PROJECT_MOTO8937_SECONDARY
-	partition_virtual_moto8937(block_size);
+		partition_virtual_moto8937(block_size);
 #else
-	partition_split_boot(block_size, false);
-	partition_split_boot(block_size, true);
+		partition_split_boot(block_size, false);
+		partition_split_boot(block_size, true);
 #endif
+	}
+
 	return 0;
 }
 
