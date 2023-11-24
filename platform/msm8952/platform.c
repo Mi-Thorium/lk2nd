@@ -71,6 +71,17 @@ static mmu_section_t mmu_section_table[] = {
 	{    RPMB_SND_RCV_BUF_STRT, RPMB_SND_RCV_BUF_STRT,   RPMB_SND_RCV_BUF_SZ,    IOMAP_MEMORY},
 };
 
+static mmu_section_t mmu_section_table_msm8952_legacy[] = {
+/*           Physical addr,         Virtual addr,            Size (in MB),     Flags */
+	{    MEMBASE,               MEMBASE,                 (MEMSIZE / MB),         LK_MEMORY},
+	{    MSM_IOMAP_BASE,        MSM_IOMAP_BASE,          MSM_IOMAP_SIZE,         IOMAP_MEMORY},
+	{    APPS_SS_BASE,          APPS_SS_BASE,            APPS_SS_SIZE,           IOMAP_MEMORY},
+	{    MSM_SHARED_IMEM_BASE,  MSM_SHARED_IMEM_BASE,    1,                      COMMON_MEMORY},
+	{    SCRATCH_ADDR,          SCRATCH_ADDR,            SCRATCH_SIZE,           SCRATCH_MEMORY},
+	{    LEGACY_MIPI_FB_ADDR,   LEGACY_MIPI_FB_ADDR,     20,                     COMMON_MEMORY},
+	{    RPMB_SND_RCV_BUF_STRT, RPMB_SND_RCV_BUF_STRT,   RPMB_SND_RCV_BUF_SZ,    IOMAP_MEMORY},
+};
+
 static mmu_section_t mmu_section_table_512[] = {
 /*           Physical addr,         Virtual addr,            Size (in MB),     Flags */
 	{    MEMBASE,               MEMBASE,                 (MEMSIZE / MB),         LK_MEMORY},
@@ -140,7 +151,11 @@ void platform_init_mmu_mappings(void)
 
 	/* Configure the MMU page entries for memory read from the
 	   mmu_section_table */
-	if(smem_get_ddr_size() > 0x20000000)
+	if (LEGACY_PRIM_BL) {
+		table_addr = mmu_section_table_msm8952_legacy;
+		table_size = ARRAY_SIZE(mmu_section_table_msm8952_legacy);
+	}
+	else if(smem_get_ddr_size() > 0x20000000)
 	{
 		table_addr = mmu_section_table;
 		table_size = ARRAY_SIZE(mmu_section_table);

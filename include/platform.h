@@ -27,6 +27,10 @@
 
 #include <dload_util.h>
 
+#ifndef LEGACY_PRIM_BL
+#define LEGACY_PRIM_BL 0
+#endif
+
 #define PA(x) platform_get_virt_to_phys_mapping(x)
 #define VA(x) platform_get_phys_to_virt_mapping(x)
 
