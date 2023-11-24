@@ -117,12 +117,12 @@ static char *verify_option_menu[] = {
 		[BACK] = "Back to previous page\n"};
 
 static char *fastboot_option_menu[] = {
-		[0] = "Continue to boot (\x80\x81\x80)\n",
-		[1] = "Restart\n",
-		[2] = "Restart to bootloader\n",
-		[3] = "Restart to recovery\n",
-		[4] = "Power off\n",
-		[5] = "Blank\n"};
+		[FASTBOOT_MENU_CONTINUE] = "Continue to boot (\x80\x81\x80)\n",
+		[FASTBOOT_MENU_RESTART] = "Restart\n",
+		[FASTBOOT_MENU_FASTBOOT] = "Restart to bootloader\n",
+		[FASTBOOT_MENU_RECOVER] = "Restart to recovery\n",
+		[FASTBOOT_MENU_POWEROFF] = "Power off\n",
+		[FASTBOOT_MENU_BLANK] = "Blank\n"};
 
 static struct unlock_info munlock_info[] = {
 		[DISPLAY_MENU_LOCK] = {UNLOCK, FALSE},
@@ -445,18 +445,18 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 
 	len = ARRAY_SIZE(fastboot_option_menu);
 	switch(option_index) {
-		case 0:
+		case FASTBOOT_MENU_CONTINUE:
 			msg_type = FBCON_GREEN_MSG;
 			break;
-		case 1:
-		case 2:
+		case FASTBOOT_MENU_RESTART:
+		case FASTBOOT_MENU_FASTBOOT:
 			msg_type = FBCON_RED_MSG;
 			break;
-		case 3:
-		case 4:
+		case FASTBOOT_MENU_RECOVER:
+		case FASTBOOT_MENU_POWEROFF:
 			msg_type = FBCON_COMMON_MSG;
 			break;
-		case 5:
+		case FASTBOOT_MENU_BLANK:
 			fbcon_flush();
 			goto end;
 	}

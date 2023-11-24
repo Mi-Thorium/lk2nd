@@ -86,11 +86,11 @@ static uint32_t verify_index_action[] = {
 };
 
 static uint32_t fastboot_index_action[] = {
-		[0] = CONTINUE,
-		[1] = RESTART,
-		[2] = FASTBOOT,
-		[3] = RECOVER,
-		[4] = POWEROFF,
+		[FASTBOOT_MENU_CONTINUE] = CONTINUE,
+		[FASTBOOT_MENU_RESTART] = RESTART,
+		[FASTBOOT_MENU_FASTBOOT] = FASTBOOT,
+		[FASTBOOT_MENU_RECOVER] = RECOVER,
+		[FASTBOOT_MENU_POWEROFF] = POWEROFF,
 };
 
 static uint32_t unlock_index_action[] = {
