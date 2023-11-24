@@ -3749,7 +3749,6 @@ static void get_partition_type(const char *arg, char *response)
 static void publish_getvar_partition_info(struct getvar_partition_info *info, uint8_t num_parts)
 {
 	uint8_t i;
-	static bool published = false;
 	struct partition_entry *ptn_entry =
 				partition_get_partition_entries();
 	memset(info, 0, sizeof(struct getvar_partition_info)* num_parts);
@@ -3772,19 +3771,19 @@ static void publish_getvar_partition_info(struct getvar_partition_info *info, ui
 			return;
 		}
 
-		if (!published)
-		{
-			/* publish partition size & type info */
-			fastboot_publish((const char *) info[i].getvar_size, (const char *) info[i].size_response);
-			fastboot_publish((const char *) info[i].getvar_type, (const char *) info[i].type_response);
-		}
+		/* publish partition size & type info */
+		fastboot_publish_disk((const char *) info[i].getvar_size, (const char *) info[i].size_response);
+		fastboot_publish_disk((const char *) info[i].getvar_type, (const char *) info[i].type_response);
 	}
-	if (!published)
-		published = true;
 }
 
 void fastboot_publish_disk_info()
 {
+	static bool published = false;
+
+	if (published)
+		fastboot_var_clear_disk();
+
 	/*
 	 * partition info is supported only for emmc partitions
 	 * Calling this for NAND prints some error messages which
@@ -3805,7 +3804,7 @@ void fastboot_publish_disk_info()
 	snprintf(max_download_size, MAX_RSP_SIZE, "\t0x%x",
 			SUB_SALT_BUFF_OFFSET(target_get_max_flash_size()));
 #endif
-	fastboot_publish("max-download-size", (const char *) max_download_size);
+	fastboot_publish_disk("max-download-size", (const char *) max_download_size);
 
         if (target_is_emmc_boot())
         {
@@ -3816,8 +3815,10 @@ void fastboot_publish_disk_info()
 		mmc_blocksize = flash_block_size();
         }
 	snprintf(block_size_string, MAX_RSP_SIZE, "0x%x", mmc_blocksize);
-	fastboot_publish("erase-block-size", (const char *) block_size_string);
-	fastboot_publish("logical-block-size", (const char *) block_size_string);
+	fastboot_publish_disk("erase-block-size", (const char *) block_size_string);
+	fastboot_publish_disk("logical-block-size", (const char *) block_size_string);
+
+	published = true;
 }
 
 void cmd_flash_mmc_img(const char *arg, void *data, unsigned sz)
@@ -3865,7 +3866,7 @@ void cmd_flash_mmc_img(const char *arg, void *data, unsigned sz)
 				return;
 			}
 			/* Re-publish partition table */
-			publish_getvar_partition_info(part_info, partition_get_partition_count());
+			fastboot_publish_disk_info();
 
 			/* Rescan partition table to ensure we have multislot support*/
 			if (partition_scan_for_multislot())
