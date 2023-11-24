@@ -68,6 +68,8 @@ void target_serialno(unsigned char *buf);
 void target_fastboot_init(void);
 void target_load_ssd_keystore(void);
 bool target_is_ssd_enabled(void);
+int target_can_change_mmc_device();
+int target_change_mmc_device();
 void *target_mmc_device();
 uint32_t is_user_force_reset(void);
 

@@ -331,6 +331,57 @@ void target_sdc_init()
 	}
 }
 
+/* Return 1 if mmc device is changeable, otherwise 0 */
+int target_can_change_mmc_device()
+{
+	if (!sdcard_dev || !emmc_dev) {
+		return 0;
+	}
+
+	return 1;
+}
+
+/* Return 0 on success, other value on error */
+int target_change_mmc_device()
+{
+	int ret = 0;
+
+	if (!target_can_change_mmc_device())
+		return 1;
+
+change:
+	if (dev == emmc_dev) {
+		dprintf(INFO, "Change MMC device from eMMC to sdcard\n");
+		dev = sdcard_dev;
+	} else if (dev == sdcard_dev) {
+		dprintf(INFO, "Change MMC device from sdcard to eMMC\n");
+		dev = emmc_dev;
+	}
+
+	if (partition_read_table()) {
+		dprintf(CRITICAL, "%s: Error reading the partition table info\n", __func__);
+		/* Fallback to eMMC if sdcard is failing */
+		if (dev == sdcard_dev) {
+			ret = 1;
+			goto change;
+		}
+	} else {
+		/* If it's sdcard, Check whether if it's bootable */
+		if (dev == sdcard_dev) {
+			if (partition_get_index("boot") == INVALID_PTN &&
+				(partition_get_index("boot_a") == INVALID_PTN ||
+				partition_get_index("boot_b") == INVALID_PTN)) {
+				dprintf(CRITICAL, "%s: sdcard is not bootable\n");
+				ret = 1;
+				goto change;
+			}
+		}
+		partition_dump();
+	}
+
+	return ret;
+}
+
 void *target_mmc_device()
 {
 	return (void *) dev;
