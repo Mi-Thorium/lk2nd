@@ -99,6 +99,8 @@
 #define USBIN_UV_RT_STS BIT(0)
 #define USBIN_UV_RT_STS_PMI632 BIT(2)
 
+extern bool boot_into_fastboot;
+
 struct mmc_device *dev;
 struct mmc_device *emmc_dev;
 struct mmc_device *sdcard_dev;
@@ -469,6 +471,13 @@ void target_init(void)
 #if SMD_SUPPORT
 	rpm_smd_init();
 #endif
+
+	/* Boot into fastboot if sdcard is bootable */
+	if (target_can_change_mmc_device()) {
+		if (target_change_mmc_device() == 0) {
+			boot_into_fastboot = true;
+		}
+	}
 }
 
 void target_serialno(unsigned char *buf)
