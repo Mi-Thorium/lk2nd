@@ -348,7 +348,7 @@ void fbcon_putc_factor(char c, int type, unsigned scale_factor)
 	if (!config)
 		return;
 
-	if((unsigned char)c > 127)
+	if((unsigned char)c > 129)
 		return;
 
 	if((unsigned char)c < 32) {
