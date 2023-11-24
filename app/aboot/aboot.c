@@ -3783,6 +3783,42 @@ static void publish_getvar_partition_info(struct getvar_partition_info *info, ui
 		published = true;
 }
 
+void fastboot_publish_disk_info()
+{
+	/*
+	 * partition info is supported only for emmc partitions
+	 * Calling this for NAND prints some error messages which
+	 * is harmless but misleading. Avoid calling this for NAND
+	 * devices.
+	 */
+	if (target_is_emmc_boot())
+		publish_getvar_partition_info(part_info, partition_get_partition_count());
+
+	if (partition_multislot_is_supported())
+		publish_getvar_multislot_vars();
+
+	/* Max download size supported */
+#if !VERIFIED_BOOT_2
+	snprintf(max_download_size, MAX_RSP_SIZE, "\t0x%x",
+			target_get_max_flash_size());
+#else
+	snprintf(max_download_size, MAX_RSP_SIZE, "\t0x%x",
+			SUB_SALT_BUFF_OFFSET(target_get_max_flash_size()));
+#endif
+	fastboot_publish("max-download-size", (const char *) max_download_size);
+
+        if (target_is_emmc_boot())
+        {
+		mmc_blocksize = mmc_get_device_blocksize();
+        }
+        else
+        {
+		mmc_blocksize = flash_block_size();
+        }
+	snprintf(block_size_string, MAX_RSP_SIZE, "0x%x", mmc_blocksize);
+	fastboot_publish("erase-block-size", (const char *) block_size_string);
+	fastboot_publish("logical-block-size", (const char *) block_size_string);
+}
 
 void cmd_flash_mmc_img(const char *arg, void *data, unsigned sz)
 {
@@ -5148,28 +5184,8 @@ void aboot_fastboot_register_commands(void)
 	snprintf(soc_version_str, MAX_RSP_SIZE, "%x", board_soc_version());
 	fastboot_publish("hw-revision", soc_version_str);
 
-	/*
-	 * partition info is supported only for emmc partitions
-	 * Calling this for NAND prints some error messages which
-	 * is harmless but misleading. Avoid calling this for NAND
-	 * devices.
-	 */
-	if (target_is_emmc_boot())
-		publish_getvar_partition_info(part_info, partition_get_partition_count());
+	fastboot_publish_disk_info();
 
-	if (partition_multislot_is_supported())
-		publish_getvar_multislot_vars();
-
-	/* Max download size supported */
-#if !VERIFIED_BOOT_2
-	snprintf(max_download_size, MAX_RSP_SIZE, "\t0x%x",
-			target_get_max_flash_size());
-#else
-	snprintf(max_download_size, MAX_RSP_SIZE, "\t0x%x",
-			SUB_SALT_BUFF_OFFSET(target_get_max_flash_size()));
-#endif
-
-	fastboot_publish("max-download-size", (const char *) max_download_size);
 	/* Is the charger screen check enabled */
 	snprintf(charger_screen_enabled, MAX_RSP_SIZE, "%d",
 			device.charger_screen_enabled);
@@ -5181,17 +5197,6 @@ void aboot_fastboot_register_commands(void)
 	fastboot_publish("display-panel",
 			(const char *) panel_display_mode);
 
-        if (target_is_emmc_boot())
-        {
-		mmc_blocksize = mmc_get_device_blocksize();
-        }
-        else
-        {
-		mmc_blocksize = flash_block_size();
-        }
-	snprintf(block_size_string, MAX_RSP_SIZE, "0x%x", mmc_blocksize);
-	fastboot_publish("erase-block-size", (const char *) block_size_string);
-	fastboot_publish("logical-block-size", (const char *) block_size_string);
 #if PRODUCT_IOT
 	get_bootloader_version_iot(&bootloader_version_string);
 	fastboot_publish("version-bootloader", (const char *) bootloader_version_string);
