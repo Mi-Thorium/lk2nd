@@ -450,11 +450,9 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 			break;
 		case FASTBOOT_MENU_RESTART:
 		case FASTBOOT_MENU_FASTBOOT:
-			msg_type = FBCON_RED_MSG;
-			break;
 		case FASTBOOT_MENU_RECOVER:
 		case FASTBOOT_MENU_POWEROFF:
-			msg_type = FBCON_COMMON_MSG;
+			msg_type = FBCON_RED_MSG;
 			break;
 		case FASTBOOT_MENU_BLANK:
 			fbcon_flush();
