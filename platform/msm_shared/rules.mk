@@ -684,10 +684,10 @@ ifeq ($(DISABLE_CRYPTO),1)
 		$(OBJS))
 endif
 
-ifeq ($(ENABLE_BOOT_CONFIG_SUPPORT), 1)
+#ifeq ($(ENABLE_BOOT_CONFIG_SUPPORT), 1)
 	OBJS += \
 		$(LOCAL_DIR)/boot_device.o
-endif
+#endif
 
 ifeq ($(ENABLE_USB30_SUPPORT),1)
 	OBJS += \

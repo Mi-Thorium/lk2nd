@@ -33,12 +33,14 @@
 #include <boot_device.h>
 #include <qpic_nand.h>
 
-static uint32_t boot_device;
+static uint32_t boot_device = BOOT_EMMC;
 
 void platform_read_boot_config()
 {
+#if ENABLE_BOOT_CONFIG_SUPPORT
 	boot_device = BOOT_DEVICE_MASK(readl(BOOT_CONFIG_REG));
 	board_update_boot_dev(boot_device);
+#endif
 }
 
 uint32_t platform_get_boot_dev()
