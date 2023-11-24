@@ -30,7 +30,8 @@ DTBS += \
 endif
 ifeq ($(PROJECT), msm8937-secondary)
 DTBS += \
-	$(LOCAL_DIR)/msm8937-nokia-nd1.dtb
+	$(LOCAL_DIR)/msm8937-nokia-nd1.dtb \
+	$(LOCAL_DIR)/msm8937-qcom-pmi8950-qrd-sku1.dtb
 endif
 
 ifeq ($(PROJECT), mi8937-secondary)
