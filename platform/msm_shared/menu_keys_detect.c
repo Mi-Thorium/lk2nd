@@ -29,6 +29,7 @@
 #include <debug.h>
 #include <reg.h>
 #include <stdlib.h>
+#include <target.h>
 #include <pm8x41.h>
 #include <pm8x41_hw.h>
 #include <kernel/timer.h>
@@ -87,6 +88,7 @@ static uint32_t verify_index_action[] = {
 
 static uint32_t fastboot_index_action[] = {
 		[FASTBOOT_MENU_CONTINUE] = CONTINUE,
+		[FASTBOOT_MENU_CHANGE_BOOT_DEVICE] = CHANGE_BOOT_DEVICE,
 		[FASTBOOT_MENU_BOOT_NORMAL] = BOOT_NORMAL,
 		[FASTBOOT_MENU_BOOT_RECOVERY] = BOOT_RECOVERY,
 		[FASTBOOT_MENU_RESTART] = RESTART,
@@ -158,6 +160,11 @@ static void update_device_status(struct select_msg_info* msg_info, int reason)
 			write_misc(0, ffbm_page_buffer, sizeof(ffbm_page_buffer));
 
 			reboot_device(0);
+			break;
+		case CHANGE_BOOT_DEVICE:
+			target_change_mmc_device();
+			if (msg_info->info.msg_type == DISPLAY_MENU_FASTBOOT)
+				display_fastboot_menu_renew(msg_info);
 			break;
 	}
 }
