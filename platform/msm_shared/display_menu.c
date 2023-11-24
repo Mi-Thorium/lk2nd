@@ -117,7 +117,7 @@ static char *verify_option_menu[] = {
 		[BACK] = "Back to previous page\n"};
 
 static char *fastboot_option_menu[] = {
-		[0] = "Continue to boot\n",
+		[0] = "Continue to boot (\x80\x81\x80)\n",
 		[1] = "Restart\n",
 		[2] = "Restart to bootloader\n",
 		[3] = "Restart to recovery\n",
