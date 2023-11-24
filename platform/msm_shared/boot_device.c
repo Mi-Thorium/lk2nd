@@ -48,6 +48,33 @@ uint32_t platform_get_boot_dev()
 	return boot_device;
 }
 
+uint8_t platform_get_boot_dev_slot_num()
+{
+	uint32_t val = 0;
+	void *dev = target_mmc_device();
+	if (!dev)
+		return 0;
+
+	val = platform_get_boot_dev();
+	switch(platform_get_boot_dev())
+	{
+#if !USE_MDM_BOOT_CFG
+		case BOOT_DEFAULT:
+			return ((struct mmc_device *)dev)->config.slot;
+		case BOOT_UFS:
+		case BOOT_SD_ELSE_UFS:
+			break; // TODO
+#endif
+		case BOOT_EMMC:
+			return ((struct mmc_device *)dev)->config.slot;
+		default:
+			dprintf(CRITICAL,"ERROR: Unexpected boot_device val=%x",val);
+	}
+
+	// we should never reach here
+	return 0;
+}
+
 /*
  * Return 1 if boot from emmc else 0
  */
