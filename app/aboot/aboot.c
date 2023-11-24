@@ -1678,9 +1678,17 @@ int boot_linux_from_mmc(void)
 	struct kernel64_hdr *kptr = NULL;
 	int current_active_slot = INVALID;
 	bool try_alternate_partition = false;
+	struct recovery_message msg;
 
-	if (check_format_bit())
+	if (check_format_bit()) {
 		boot_into_recovery = 1;
+		have_to_wipe_misc = 0;
+	}
+
+	if (have_to_wipe_misc) {
+		memset(&msg, 0, sizeof(msg));
+		write_misc(0, &msg, sizeof(msg));
+	}
 
 	if (!boot_into_recovery) {
 		memset(ffbm_mode_string, '\0', sizeof(ffbm_mode_string));
