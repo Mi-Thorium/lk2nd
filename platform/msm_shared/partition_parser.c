@@ -155,7 +155,11 @@ void partition_split_boot(uint32_t block_size, bool part_recovery)
 {
 	struct partition_entry *boot;
 	int index = partition_get_index(part_recovery ? "recovery" : "boot");
+#if PROJECT_MI439_SECONDARY
+	unsigned long long lk_size = (2 * 1024 * 1024) / block_size;
+#else
 	unsigned long long lk_size = (1 * 1024 * 1024) / block_size;
+#endif
 
 	if (index == INVALID_PTN) {
 		dprintf(CRITICAL, "Boot partition not found\n");
