@@ -3,3 +3,5 @@ include $(LOCAL_DIR)/mi8937-secondary.mk
 
 BOARD_NAME := land-secondary
 DEFINES += PROJECT_LAND_SECONDARY=1
+
+DEFINES += LEGACY_PRIM_BL=1
