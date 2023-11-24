@@ -118,6 +118,8 @@ static char *verify_option_menu[] = {
 
 static char *fastboot_option_menu[] = {
 		[FASTBOOT_MENU_CONTINUE] = "Continue to boot (\x80\x81\x80)\n",
+		[FASTBOOT_MENU_BOOT_NORMAL] = "Boot into normal mode\n",
+		[FASTBOOT_MENU_BOOT_RECOVERY] = "Boot into recovery mode\n",
 		[FASTBOOT_MENU_RESTART] = "Restart\n",
 		[FASTBOOT_MENU_FASTBOOT] = "Restart to bootloader\n",
 		[FASTBOOT_MENU_RECOVER] = "Restart to recovery\n",
@@ -447,6 +449,10 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 	switch(option_index) {
 		case FASTBOOT_MENU_CONTINUE:
 			msg_type = FBCON_GREEN_MSG;
+			break;
+		case FASTBOOT_MENU_BOOT_NORMAL:
+		case FASTBOOT_MENU_BOOT_RECOVERY:
+			msg_type = FBCON_COMMON_MSG;
 			break;
 		case FASTBOOT_MENU_RESTART:
 		case FASTBOOT_MENU_FASTBOOT:

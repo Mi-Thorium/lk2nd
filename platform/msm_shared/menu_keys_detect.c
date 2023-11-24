@@ -87,6 +87,8 @@ static uint32_t verify_index_action[] = {
 
 static uint32_t fastboot_index_action[] = {
 		[FASTBOOT_MENU_CONTINUE] = CONTINUE,
+		[FASTBOOT_MENU_BOOT_NORMAL] = BOOT_NORMAL,
+		[FASTBOOT_MENU_BOOT_RECOVERY] = BOOT_RECOVERY,
 		[FASTBOOT_MENU_RESTART] = RESTART,
 		[FASTBOOT_MENU_FASTBOOT] = FASTBOOT,
 		[FASTBOOT_MENU_RECOVER] = RECOVER,
@@ -130,6 +132,15 @@ static void update_device_status(struct select_msg_info* msg_info, int reason)
 		case FASTBOOT:
 			reboot_device(FASTBOOT_MODE);
 			break;
+		case BOOT_NORMAL:
+		case BOOT_RECOVERY:
+			if (reason == BOOT_RECOVERY) {
+				boot_into_recovery = 1;
+			} else {
+				boot_into_recovery = 0;
+				have_to_wipe_misc = 1;
+			}
+			// fallthrough to CONTINUE
 		case CONTINUE:
 			/* Continue boot, no need to detect the keys'status */
 			msg_info->info.is_exit = true;
