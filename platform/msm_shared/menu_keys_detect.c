@@ -57,6 +57,7 @@ extern int target_volume_up();
 extern uint32_t target_volume_down();
 extern void reboot_device(unsigned reboot_reason);
 extern void shutdown_device();
+extern void fastboot_publish_disk_info();
 
 typedef uint32_t (*keys_detect_func)(void);
 typedef void (*keys_action_func)(struct select_msg_info* msg_info);
@@ -163,8 +164,10 @@ static void update_device_status(struct select_msg_info* msg_info, int reason)
 			break;
 		case CHANGE_BOOT_DEVICE:
 			target_change_mmc_device();
-			if (msg_info->info.msg_type == DISPLAY_MENU_FASTBOOT)
+			if (msg_info->info.msg_type == DISPLAY_MENU_FASTBOOT) {
+				fastboot_publish_disk_info();
 				display_fastboot_menu_renew(msg_info);
+			}
 			break;
 	}
 }
