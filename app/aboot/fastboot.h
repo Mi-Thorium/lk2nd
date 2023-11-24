@@ -49,6 +49,8 @@ void fastboot_register(const char *prefix,
 
 /* publish a variable readable by the built-in getvar command */
 void fastboot_publish(const char *name, const char *value);
+void fastboot_publish_disk(const char *name, const char *value);
+void fastboot_var_clear_disk();
 
 /* only callable from within a command handler */
 void fastboot_okay(const char *result);

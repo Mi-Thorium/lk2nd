@@ -157,6 +157,31 @@ void fastboot_publish(const char *name, const char *value)
 	}
 }
 
+static struct fastboot_var *varlist_disk;
+void fastboot_publish_disk(const char *name, const char *value)
+{
+	struct fastboot_var *var;
+	var = malloc(sizeof(*var));
+	if (var) {
+		var->name = name;
+		var->value = value;
+		var->next = varlist_disk;
+		varlist_disk = var;
+	}
+}
+void fastboot_var_clear_disk()
+{
+	struct fastboot_var *var, *next_var;
+
+	for (var = varlist_disk; var; ) {
+		next_var = var->next;
+		free(var);
+		var = next_var;
+	}
+
+	varlist_disk = NULL;
+}
+
 
 static event_t usb_online;
 static event_t txn_done;
@@ -452,6 +477,14 @@ static void getvar_all()
 		fastboot_info(getvar_all);
 		memset((void *) getvar_all, '\0', sizeof(getvar_all));
 	}
+	for (var = varlist_disk; var; var = var->next)
+	{
+		strlcpy((char *) getvar_all, var->name, sizeof(getvar_all));
+		strlcat((char *) getvar_all, ":", sizeof(getvar_all));
+		strlcat((char *) getvar_all, var->value, sizeof(getvar_all));
+		fastboot_info(getvar_all);
+		memset((void *) getvar_all, '\0', sizeof(getvar_all));
+	}
 	fastboot_okay("");
 }
 
@@ -487,6 +520,12 @@ static void cmd_getvar(const char *arg, void *data, unsigned sz)
 	}
 
 	for (var = varlist; var; var = var->next) {
+		if (!strcmp(var->name, arg)) {
+			fastboot_okay(var->value);
+			return;
+		}
+	}
+	for (var = varlist_disk; var; var = var->next) {
 		if (!strcmp(var->name, arg)) {
 			fastboot_okay(var->value);
 			return;
