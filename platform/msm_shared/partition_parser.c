@@ -167,16 +167,22 @@ void partition_split_boot(uint32_t block_size, bool part_recovery)
 		return;
 	}
 
-	if (partition_count < NUM_PARTITIONS) {
+	if ((partition_count + 2) < NUM_PARTITIONS) {
+		// Create lk2nd partition
 		struct partition_entry *lk = &partition_entries[partition_count++];
 		memcpy(lk, boot, sizeof(*lk));
 		strcpy(lk->name, part_recovery ? "lk2nd-recovery" : "lk2nd");
 		lk->last_lba = lk->first_lba + lk_size - 1;
 		lk->size = lk_size;
+		// Duplicate boot partition as real_boot
+		struct partition_entry *real_boot = &partition_entries[partition_count++];
+		memcpy(real_boot, boot, sizeof(*real_boot));
+		strcpy(real_boot->name, part_recovery ? "real_recovery" : "real_boot");
 	} else {
 		dprintf(INFO, "Too many partitions to add virtual 'lk2nd' partition\n");
 	}
 
+	// Modify boot partition
 	boot->first_lba += lk_size;
 	boot->size -= lk_size;
 }
