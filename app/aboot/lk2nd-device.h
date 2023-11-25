@@ -36,6 +36,8 @@ struct lk2nd_device {
 	bool dev_mode;
 
 	struct lk2nd_panel panel;
+
+	uint32_t notch_height;
 };
 
 extern struct lk2nd_device lk2nd_dev;

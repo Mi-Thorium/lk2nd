@@ -366,6 +366,8 @@ static void lk2nd_parse_device_node(const void *fdt)
 	else
 		dprintf(CRITICAL, "Device node is missing 'model' property\n");
 
+	fdt_getprop_u32(fdt, offset, "lk2nd,notch-height", &lk2nd_dev.notch_height);
+
 #ifdef MI8937_KERNEL
 	lk2nd_dev.mi8937_bootloader = fdt_copyprop_str(fdt, offset, "xiaomi,bootloader");
 	if (lk2nd_dev.mi8937_bootloader)
