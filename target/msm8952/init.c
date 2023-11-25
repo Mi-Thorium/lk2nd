@@ -802,6 +802,10 @@ void target_crypto_init_params()
 
 bool target_is_pmi_enabled(void)
 {
+#if PROJECT_MI8937_SECONDARY
+	return 0;
+#endif
+
 	if(platform_is_qm215() || (platform_is_msm8917() &&
 	   (board_hardware_subtype() == HW_PLATFORM_SUBTYPE_SAP_NOPMI)))
 		return 0;
