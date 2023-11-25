@@ -13,6 +13,8 @@
 
 	qcom,board-id = <0xb 8>; // lk2nd edit, added to make dtbTool happy
 
+	lk2nd,notch-height = <3>; // lk2nd edit
+
 	__symbols__ {
 		CLUSTER_COST_0 = "/energy-costs/cluster-cost0";
 		CLUSTER_COST_1 = "/energy-costs/cluster-cost1";
