@@ -320,6 +320,16 @@ const void *fdt_getprop(const void *fdt, int nodeoffset,
 	return fdt_getprop_namelen(fdt, nodeoffset, name, strlen(name), lenp);
 }
 
+void fdt_getprop_u32(const void *fdt, int nodeoffset,
+			const char *name, uint32_t *val)
+{
+	int len;
+	const uint32_t *prop = fdt_getprop(fdt, nodeoffset, name, &len);
+
+	if (len == sizeof(*val))
+		*val = fdt32_to_cpu(*prop);
+}
+
 uint32_t fdt_get_phandle(const void *fdt, int nodeoffset)
 {
 	const uint32_t *php;
