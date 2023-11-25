@@ -269,11 +269,21 @@ void reset_device_unlock_status (int type)
 	}
 }
 
+static void display_under_notch()
+{
+	int i;
+
+	for (i = 0; i < lk2nd_dev.notch_height; i++) {
+		display_fbcon_menu_message("\n", FBCON_COMMON_MSG, common_factor);
+	}
+}
+
 /* msg_lock need to be holded when call this function. */
 static void display_unlock_menu_renew(struct select_msg_info *unlock_msg_info,
                                       int type, bool status)
 {
 	fbcon_clear();
+	display_under_notch();
 	memset(&unlock_msg_info->info, 0, sizeof(struct menu_info));
 
 	display_fbcon_menu_message("<!>\n\n",
@@ -336,6 +346,7 @@ void display_bootverify_menu_renew(struct select_msg_info *msg_info, int type)
 	uint32_t timeout = DELAY_5SEC;
 
 	fbcon_clear();
+	display_under_notch();
 	memset(&msg_info->info, 0, sizeof(struct menu_info));
 
 	/* Align Right */
@@ -406,6 +417,7 @@ void display_bootverify_option_menu_renew(struct select_msg_info *msg_info)
 	int len = 0;
 
 	fbcon_clear();
+	display_under_notch();
 	memset(&msg_info->info, 0, sizeof(struct menu_info));
 
 	len = ARRAY_SIZE(verify_option_menu);
@@ -446,6 +458,7 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 	uint32_t option_index = fastboot_msg_info->info.option_index;
 
 	fbcon_clear();
+	display_under_notch();
 	memset(&fastboot_msg_info->info, 0, sizeof(struct menu_info));
 
 	len = ARRAY_SIZE(fastboot_option_menu);
