@@ -569,6 +569,9 @@ static inline void *fdt_getprop_w(void *fdt, int nodeoffset,
 	return (void *)(uintptr_t)fdt_getprop(fdt, nodeoffset, name, lenp);
 }
 
+void fdt_getprop_u32(const void *fdt, int nodeoffset,
+			const char *name, uint32_t *val);
+
 /**
  * fdt_get_phandle - retrieve the phandle of a given node
  * @fdt: pointer to the device tree blob

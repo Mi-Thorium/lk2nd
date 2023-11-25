@@ -14,15 +14,6 @@
 #define SMEM_KERNEL_RESERVE      SMEM_ID_VENDOR0
 #define SMEM_KERNEL_RESERVE_SIZE 1024
 
-static void fdt_getprop_u32(const void *fdt, int offset, const char *name, uint32_t *val) {
-	int len;
-	const uint32_t *prop = fdt_getprop(fdt, offset, name, &len);
-	if (len == sizeof(*val))
-		*val = fdt32_to_cpu(*prop);
-	else
-		dprintf(CRITICAL, "Failed to get prop %s in device tree\n", name);
-}
-
 void lk2nd_motorola_smem_write_unit_info(const void *fdt, int offset)
 {
 	int chosen_offset, len, ret = 0;
