@@ -214,27 +214,16 @@ void target_sdc_init()
 
 	sdcard_dev = mmc_init(&sd_config);
 
-	if (!sdcard_dev) {
+	if (!sdcard_dev)
 		dprintf(CRITICAL, "sdcard init failed!");
-	} else if (!dev) {
-		/* emmc failed but we still have sdcard */
-		dev = sdcard_dev;
-	}
 
-	if (!sdcard_dev && !emmc_dev) {
-		dprintf(CRITICAL, "BOTH SLOTS FAILED!");
-		ASSERT(0);
-	}
+	dev = sdcard_dev;
 }
 
 /* Return 1 if mmc device is changeable, otherwise 0 */
 int target_can_change_mmc_device()
 {
-	if (!sdcard_dev || !emmc_dev) {
-		return 0;
-	}
-
-	return 1;
+	return 0;
 }
 
 /* Return 0 on success, other value on error */
