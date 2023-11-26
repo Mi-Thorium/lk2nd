@@ -112,7 +112,7 @@ static int aboot_frp_unlock(char *pname, void *data, unsigned sz);
 static inline uint64_t validate_partition_size();
 bool pwr_key_is_pressed = false;
 static bool is_systemd_present=false;
-static void publish_getvar_multislot_vars();
+void publish_getvar_multislot_vars();
 /* fastboot command function pointer */
 typedef void (*fastboot_cmd_fn) (const char *, void *, unsigned);
 bool get_perm_attr_status();
