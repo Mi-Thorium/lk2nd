@@ -42,6 +42,7 @@
 #include <sys/types.h>
 #include <reboot.h>
 #include <boot_device.h>
+#include <ab_partition_parser.h>
 #include <../../../app/aboot/devinfo.h>
 #include <../../../app/aboot/recovery.h>
 #include <../../../app/aboot/lk2nd-device.h>
@@ -448,6 +449,7 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 {
 	int len;
 	int msg_type = FBCON_COMMON_MSG;
+	int msg_buf_int;
 	unsigned int msg_buf_uint;
 	char msg_buf[64];
 	char msg[128];
@@ -566,6 +568,22 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 	msg_buf_uint = platform_get_boot_dev_slot_num();
 	snprintf(msg, sizeof(msg), "BOOT DEVICE SLOT - %u\n", msg_buf_uint);
 	display_fbcon_menu_message(msg, FBCON_COMMON_MSG, common_factor);
+
+	display_fbcon_menu_message("PARTITION ACTIVE SLOT -", FBCON_COMMON_MSG, common_factor);
+	memset(msg_buf, 0, sizeof(msg_buf));
+	if (partition_multislot_is_supported()) {
+		msg_buf_int = partition_find_active_slot();
+		if (msg_buf_int < AB_SUPPORTED_SLOTS) {
+			strcpy(msg_buf, SUFFIX_SLOT(msg_buf_int));
+			msg_buf[0] = ' '; // Removes the suffix delimiter
+			display_fbcon_menu_message(msg_buf, FBCON_COMMON_MSG, common_factor);
+		} else {
+			display_fbcon_menu_message(" INVALID", FBCON_RED_MSG, common_factor);
+		}
+	} else {
+		display_fbcon_menu_message(" UNSUPPORTED", FBCON_COMMON_MSG, common_factor);
+	}
+	display_fbcon_menu_message("\n", FBCON_COMMON_MSG, common_factor);
 
 	memset(msg_buf, 0, sizeof(msg_buf));
 	get_bootloader_version((unsigned char *) msg_buf);
