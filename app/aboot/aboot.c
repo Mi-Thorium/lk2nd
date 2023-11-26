@@ -1077,7 +1077,9 @@ static char *concat_args(const char *a, const char *b)
 
 void patch_cmdline(char* cmdline) {
 	char *cmdline_offset_ptr, *cmdline_offset_ptr2;
+	char *cmdline_buf;
 	char *boot_dev_buf = (char *) malloc(sizeof(char) * BOOT_DEV_MAX_LEN);
+	char buf[32];
 	int value_len = 0;
 
 	cmdline_offset_ptr = strstr(cmdline, "androidboot.bootdevice=");
@@ -1092,6 +1094,33 @@ void patch_cmdline(char* cmdline) {
 		memset(cmdline_offset_ptr, ' ', value_len);
 		memcpy(cmdline_offset_ptr, boot_dev_buf,
 			value_len < strlen(boot_dev_buf) ? value_len : strlen(boot_dev_buf));
+	}
+
+	cmdline_offset_ptr = strstr(cmdline, "androidboot.slot_suffix=");
+	if (cmdline_offset_ptr) {
+		cmdline_offset_ptr += strlen("androidboot.slot_suffix=");
+
+		cmdline_offset_ptr2 = strstr(cmdline_offset_ptr, " ");
+		if (!cmdline_offset_ptr2)
+			cmdline_offset_ptr2 = cmdline_offset_ptr + strlen(cmdline_offset_ptr);
+		value_len = cmdline_offset_ptr2 - cmdline_offset_ptr;
+
+		if (partition_multislot_is_supported()) {
+			if (value_len == 2) { // "_a"
+				memcpy(cmdline_offset_ptr, SUFFIX_SLOT(partition_find_active_slot()), 2);
+			}
+		} else {
+			memset(cmdline_offset_ptr, ' ', strlen("androidboot.slot_suffix="));
+			memset(cmdline_offset_ptr2, ' ', value_len);
+		}
+	} else {
+		if (partition_multislot_is_supported()) {
+			snprintf(buf, sizeof(buf), "androidboot.slot_suffix=%s",
+				SUFFIX_SLOT(partition_find_active_slot()));
+			cmdline_buf = concat_args(cmdline, buf);
+			free(cmdline);
+			cmdline = cmdline_buf;
+		}
 	}
 
 	if (boot_dev_buf)
