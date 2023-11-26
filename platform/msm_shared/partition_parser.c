@@ -154,42 +154,64 @@ void partition_virtual_moto8937(uint32_t block_size)
 void partition_split_boot(uint32_t block_size, bool part_recovery)
 {
 	struct partition_entry *boot;
-	int index = partition_get_index(part_recovery ? "recovery" : "boot");
+	char tmp_slot_suffix_buf[MAX_SLOT_SUFFIX_SZ], tmp_partition_name_buf[20];
+	int i, index, slots;
 #if PROJECT_MI439_SECONDARY
 	unsigned long long lk_size = (2 * 1024 * 1024) / block_size;
 #else
 	unsigned long long lk_size = (1 * 1024 * 1024) / block_size;
 #endif
 
-	if (index == INVALID_PTN) {
-		dprintf(CRITICAL, "Boot partition not found\n");
-		return;
-	}
-	boot = &partition_entries[index];
+	if (partition_multislot_is_supported())
+		slots = AB_SUPPORTED_SLOTS;
+	else
+		slots = 1;
 
-	if (boot->size < lk_size) {
-		dprintf(CRITICAL, "Boot partition has not enough space for lk2nd\n");
-		return;
-	}
+	for (i = 0; i < slots; i++) {
+		if (partition_multislot_is_supported())
+			strlcpy(tmp_slot_suffix_buf, SUFFIX_SLOT(i), MAX_SLOT_SUFFIX_SZ);
+		else
+			memset(&tmp_slot_suffix_buf, '\0', MAX_SLOT_SUFFIX_SZ);
 
-	if ((partition_count + 2) < NUM_PARTITIONS) {
-		// Create lk2nd partition
-		struct partition_entry *lk = &partition_entries[partition_count++];
-		memcpy(lk, boot, sizeof(*lk));
-		strcpy(lk->name, part_recovery ? "lk2nd-recovery" : "lk2nd");
-		lk->last_lba = lk->first_lba + lk_size - 1;
-		lk->size = lk_size;
-		// Duplicate boot partition as real_boot
-		struct partition_entry *real_boot = &partition_entries[partition_count++];
-		memcpy(real_boot, boot, sizeof(*real_boot));
-		strcpy(real_boot->name, part_recovery ? "real_recovery" : "real_boot");
-	} else {
-		dprintf(INFO, "Too many partitions to add virtual 'lk2nd' partition\n");
-	}
+		snprintf(tmp_partition_name_buf, sizeof(tmp_partition_name_buf),
+			"%s%s", part_recovery ? "recovery" : "boot", tmp_slot_suffix_buf);
 
-	// Modify boot partition
-	boot->first_lba += lk_size;
-	boot->size -= lk_size;
+		index = partition_get_index(tmp_partition_name_buf);
+
+		if (index == INVALID_PTN) {
+			dprintf(CRITICAL, "%s: %s partition not found\n",
+				__func__, tmp_slot_suffix_buf);
+			continue;
+		}
+		boot = &partition_entries[index];
+
+		if (boot->size < lk_size) {
+			dprintf(CRITICAL, "%s: %s partition has not enough space for lk2nd\n",
+				__func__, tmp_slot_suffix_buf);
+			continue;
+		}
+
+		if ((partition_count + 2) < NUM_PARTITIONS) {
+			// Create lk2nd partition
+			struct partition_entry *lk = &partition_entries[partition_count++];
+			memcpy(lk, boot, sizeof(*lk));
+			snprintf(lk->name, MAX_GPT_NAME_SIZE, "lk2nd-%s%s",
+				part_recovery ? "recovery" : "boot", tmp_slot_suffix_buf);
+			lk->last_lba = lk->first_lba + lk_size - 1;
+			lk->size = lk_size;
+			// Duplicate boot partition as real_boot
+			struct partition_entry *real_boot = &partition_entries[partition_count++];
+			memcpy(real_boot, boot, sizeof(*real_boot));
+			snprintf(real_boot->name, MAX_GPT_NAME_SIZE, "real_%s%s",
+				part_recovery ? "recovery" : "boot", tmp_slot_suffix_buf);
+		} else {
+			dprintf(INFO, "Too many partitions to add virtual 'lk2nd' partition\n");
+		}
+
+		// Modify boot partition
+		boot->first_lba += lk_size;
+		boot->size -= lk_size;
+	}
 }
 #endif
 
