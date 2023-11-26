@@ -1634,6 +1634,32 @@ void get_recovery_dtbo_info(uint32_t *dtbo_size, void **dtbo_buf)
 	return;
 }
 
+/* Function to check whether if A/B active slot is invalid.
+ * Returns true if it's fine, or false if it's invalid.
+ */
+bool validate_multislot_active_slot(void)
+{
+	int boot_slot = INVALID;
+
+	if (partition_multislot_is_supported())
+	{
+		boot_slot = partition_find_active_slot();
+		if (boot_slot == INVALID)
+		{
+			dprintf(INFO, "Active Slot: (INVALID)\n");
+			return false;
+		}
+		else
+		{
+			/* Setting the state of system to boot active slot */
+			partition_mark_active_slot(boot_slot);
+			dprintf(INFO, "Active Slot: (%s)\n", SUFFIX_SLOT(boot_slot));
+		}
+	}
+
+	return true;
+}
+
 int boot_linux_from_mmc(void)
 {
 	boot_img_hdr *hdr = (void*) buf;
@@ -1707,6 +1733,10 @@ int boot_linux_from_mmc(void)
 		hdr = uhdr;
 		goto unified_boot;
 	}
+
+	/* Detect multi-slot support */
+	if (!validate_multislot_active_slot())
+		return -1;
 
 	/* For a/b recovery image code is on boot partition.
 	   If we support multislot, always use boot partition. */
@@ -5247,7 +5277,6 @@ void aboot_fastboot_register_commands(void)
 void aboot_init(const struct app_descriptor *app)
 {
 	int boot_err_type = 0;
-	int boot_slot = INVALID;
 
 	/* Initialise wdog to catch early lk crashes */
 #if WDOG_SUPPORT
@@ -5274,21 +5303,8 @@ void aboot_init(const struct app_descriptor *app)
 	read_allow_oem_unlock(&device);
 
 	/* Detect multi-slot support */
-	if (partition_multislot_is_supported())
-	{
-		boot_slot = partition_find_active_slot();
-		if (boot_slot == INVALID)
-		{
-			boot_into_fastboot = true;
-			dprintf(INFO, "Active Slot: (INVALID)\n");
-		}
-		else
-		{
-			/* Setting the state of system to boot active slot */
-			partition_mark_active_slot(boot_slot);
-			dprintf(INFO, "Active Slot: (%s)\n", SUFFIX_SLOT(boot_slot));
-		}
-	}
+	if (!validate_multislot_active_slot())
+		boot_into_fastboot = true;
 
 	/* Display splash screen if enabled */
 #if DISPLAY_SPLASH_SCREEN
@@ -5430,14 +5446,6 @@ normal_boot:
 			}
 
 retry_boot:
-			/* Trying to boot active partition */
-			if (partition_multislot_is_supported())
-			{
-				boot_slot = partition_find_boot_slot();
-				if (boot_slot == INVALID)
-					goto fastboot;
-			}
-
 			boot_err_type = boot_linux_from_mmc();
 			switch (boot_err_type)
 			{
