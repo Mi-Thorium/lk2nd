@@ -1733,6 +1733,15 @@ retry_boot:
                 return -1;
 	}
 
+	/* If lk2nd is installed on the mmc's boot partition,
+	 * the device would repeat booting into lk2nd forever.
+	 * Prevent this to happen.
+	*/
+	if (strstr(hdr->cmdline, "lk2nd")) {
+		dprintf(CRITICAL, "ERROR: lk2nd detected on partition %s. As the current bootloader is already lk2nd, Prevent entering the loop of booting lk2nd from mmc repeatly.\n", ptn_name);
+		return ERR_REPEAT_BOOT_LK2ND;
+	}
+
 	if (memcmp(hdr->magic, BOOT_MAGIC, BOOT_MAGIC_SIZE)) {
 		dprintf(CRITICAL, "ERROR: Invalid boot image header on partition %s\n", ptn_name);
 		if (!try_alternate_partition) {
@@ -5436,6 +5445,7 @@ retry_boot:
 				case ERR_DT_PARSE:
 				case ERR_ABOOT_ADDR_OVERLAP:
 				case ERR_INVALID_BOOT_MAGIC:
+				case ERR_REPEAT_BOOT_LK2ND:
 				default:
 					break;
 				/* going to fastboot menu */
