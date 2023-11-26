@@ -121,6 +121,7 @@ static char *verify_option_menu[] = {
 static char *fastboot_option_menu[] = {
 		[FASTBOOT_MENU_CONTINUE] = "Continue to boot (\x80\x81\x80)\n",
 		[FASTBOOT_MENU_CHANGE_BOOT_DEVICE] = "Change boot device\n",
+		[FASTBOOT_MENU_CHANGE_PARTITION_ACTIVE_SLOT] = "Change partition active slot\n",
 		[FASTBOOT_MENU_BOOT_NORMAL] = "Boot into normal mode\n",
 		[FASTBOOT_MENU_BOOT_RECOVERY] = "Boot into recovery mode\n",
 		[FASTBOOT_MENU_RESTART] = "Restart\n",
@@ -470,6 +471,12 @@ void display_fastboot_menu_renew(struct select_msg_info *fastboot_msg_info)
 			break;
 		case FASTBOOT_MENU_CHANGE_BOOT_DEVICE:
 			if (target_can_change_mmc_device())
+				msg_type = FBCON_BLUE_MSG;
+			else
+				msg_type = FBCON_SUBTITLE_MSG; // gray out
+			break;
+		case FASTBOOT_MENU_CHANGE_PARTITION_ACTIVE_SLOT:
+			if (partition_multislot_is_supported())
 				msg_type = FBCON_BLUE_MSG;
 			else
 				msg_type = FBCON_SUBTITLE_MSG; // gray out

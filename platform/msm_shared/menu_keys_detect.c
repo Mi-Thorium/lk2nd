@@ -44,6 +44,7 @@
 #include <platform.h>
 #include <reboot.h>
 #include <sys/types.h>
+#include <ab_partition_parser.h>
 #include <../../../app/aboot/recovery.h>
 #include <../../../app/aboot/devinfo.h>
 #include <string.h>
@@ -58,6 +59,7 @@ extern uint32_t target_volume_down();
 extern void reboot_device(unsigned reboot_reason);
 extern void shutdown_device();
 extern void fastboot_publish_disk_info();
+extern void publish_getvar_multislot_vars();
 
 typedef uint32_t (*keys_detect_func)(void);
 typedef void (*keys_action_func)(struct select_msg_info* msg_info);
@@ -90,6 +92,7 @@ static uint32_t verify_index_action[] = {
 static uint32_t fastboot_index_action[] = {
 		[FASTBOOT_MENU_CONTINUE] = CONTINUE,
 		[FASTBOOT_MENU_CHANGE_BOOT_DEVICE] = CHANGE_BOOT_DEVICE,
+		[FASTBOOT_MENU_CHANGE_PARTITION_ACTIVE_SLOT] = CHANGE_PARTITION_ACTIVE_SLOT,
 		[FASTBOOT_MENU_BOOT_NORMAL] = BOOT_NORMAL,
 		[FASTBOOT_MENU_BOOT_RECOVERY] = BOOT_RECOVERY,
 		[FASTBOOT_MENU_RESTART] = RESTART,
@@ -115,6 +118,20 @@ static int is_key_pressed(int keys_type)
 	}
 
 	return 0;
+}
+
+static void change_partition_active_slot(void)
+{
+	unsigned current_active_slot = partition_find_active_slot();
+	unsigned new_slot;
+
+	if (current_active_slot < SLOT_A ||
+		current_active_slot >= (AB_SUPPORTED_SLOTS - 1))
+		new_slot = SLOT_A;
+	else
+		new_slot = current_active_slot + 1;
+
+	partition_switch_slots(current_active_slot, new_slot);
 }
 
 static void update_device_status(struct select_msg_info* msg_info, int reason)
@@ -168,6 +185,16 @@ static void update_device_status(struct select_msg_info* msg_info, int reason)
 				fastboot_publish_disk_info();
 				display_fastboot_menu_renew(msg_info);
 			}
+			break;
+		case CHANGE_PARTITION_ACTIVE_SLOT:
+			if (partition_multislot_is_supported()) {
+				change_partition_active_slot();
+				if (msg_info->info.msg_type == DISPLAY_MENU_FASTBOOT) {
+					publish_getvar_multislot_vars();
+				}
+			}
+			if (msg_info->info.msg_type == DISPLAY_MENU_FASTBOOT)
+				display_fastboot_menu_renew(msg_info);
 			break;
 	}
 }
