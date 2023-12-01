@@ -464,7 +464,6 @@ void lk2nd_init(void)
 {
 	dump_board();
 	lk2nd_fdt_parse();
-	lk2nd_handle_multislot();
 }
 
 static void lk2nd_update_panel_compatible(void *fdt)
