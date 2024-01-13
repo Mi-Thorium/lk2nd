@@ -24,6 +24,8 @@ DEFINES += DEFAULT_UNLOCK=1
 
 DEFINES += DISPLAY_SPLASH_SCREEN=1
 
+DEFINES += ULTRALEGACY_PRIM_BL=1
+
 # Use continuous splash from primary bootloader for display
 DISPLAY_USE_CONTINUOUS_SPLASH := 1
 
